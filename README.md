@@ -1,2 +1,6 @@
-# mtaservers.eu
-Ez egy olyan weboldal lesz ahol, hasonlóan a gameservers.net-es nézethez a fontosabb magyar MTA szerverek játékos számait és updatejeit lehet nyomonkövetni egy egyszerű panelen.
+Ahhoz, hogy fejleszteni tudd cloneozd le és futtasd git consoleban a következőket:
+npm install
+composer update
+php artisan serve
+php artisan migrate
+php artisan db:seeder
