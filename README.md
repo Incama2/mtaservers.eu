@@ -3,5 +3,4 @@ Ahhoz, hogy fejleszteni tudd cloneozd le és futtasd git consoleban a következ�
     npm install
     composer update
     php artisan serve
-    php artisan migrate
-    php artisan db:seeder
+    php artisan migrate:fresh --seed

@@ -4,32 +4,28 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Server;
+use App\OnlinePlayer;
 use Goutte;
 
 class ServerController extends Controller
 {
     public function index() {
-
-
         $all_servers = Server::all();
-        $servers = [];
+        $response = [];
 
         foreach ($all_servers as $server) {
-            array_push($servers, $server->ip);
+            $response[$server->ip] = [];
+            $crawler = Goutte::request('GET', 'https://www.game-state.com/' . $server->ip);
+            $response[$server->ip]['servername'] = $crawler->filter('#hostname')->text();
+            $response[$server->ip]['gamemode'] = $crawler->filter('#gamemode')->text();
+            $response[$server->ip]['mapname'] = $crawler->filter('#mapname')->text();
+            $response[$server->ip]['state'] = $crawler->filter('#state')->text();
+            $response[$server->ip]['players'] = OnlinePlayer::where('serverID', $server->id)->take(100)->orderBy('date', 'ASC')->get(['count', 'date']);
         }
 
-        $response = [];
-        foreach ($servers as $key => $serverip) {
-            $response[$serverip] = [];
-            $crawler = Goutte::request('GET', 'https://www.game-state.com/' . $serverip);
-            $response[$serverip]['servername'] = $crawler->filter('#hostname')->text();
-            $response[$serverip]['gamemode'] = $crawler->filter('#gamemode')->text();
-            $response[$serverip]['mapname'] = $crawler->filter('#mapname')->text();
-            $response[$serverip]['players'] = preg_replace('{\/\d+}', '', $crawler->filter('#players')->text());
-            $response[$serverip]['state'] = $crawler->filter('#state')->text();
-        }
-
-        return json_encode($response);
+        return response()->json([
+            "response" => $response
+        ], 200);
     }
 }
 

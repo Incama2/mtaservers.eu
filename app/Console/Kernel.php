@@ -2,8 +2,11 @@
 
 namespace App\Console;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Goutte;
+use App\Server;
 
 class Kernel extends ConsoleKernel
 {
@@ -26,6 +29,18 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
+
+        $schedule->call(function() {
+
+            $all_servers = Server::all();
+            foreach ($all_servers as $server) {
+                $crawler = Goutte::request('GET', 'https://www.game-state.com/' . $server->ip);
+                $count = preg_replace('{\/\d+}', '', $crawler->filter('#players')->text());
+                DB::table('onlineplayers')->insert(
+                    ['serverID' => $server->id, 'count' => $count]
+                );
+            }
+        })->daily();
     }
 
     /**
