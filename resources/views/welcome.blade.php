@@ -7,15 +7,17 @@
 
         <title>Laravel</title>
 
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+        <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700" rel="stylesheet">
         <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 
     </head>
-    <body class="grey darken-4 white-text">
+    <body>
         <div id="app">
             <main-app></main-app>
         </div>
 
+        <script src="{{ asset('js/manifest.js') }}"></script>
+        <script src="{{ asset('js/vendor.js') }}"></script>
         <script src="{{ asset('js/app.js') }}"></script>
     </body>
 </html>
