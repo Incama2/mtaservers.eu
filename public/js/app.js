@@ -67202,9 +67202,25 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: 'home',
+    data: function data() {
+        return {
+            form_data: {
+                new_server_ip: ''
+            },
+            errors: null
+        };
+    },
     mounted: function mounted() {
         if (this.servers.length) {
             return;
@@ -67216,6 +67232,23 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     computed: {
         servers: function servers() {
             return this.$store.getters.servers;
+        }
+    },
+    methods: {
+        addNewServer: function addNewServer() {
+            var _this = this;
+
+            if (this.$data.form_data.new_server_ip.length > 9) {
+                if (this.$data.form_data.new_server_ip.match(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]):[0-9]+$/g)) {
+                    axios.post('api/addserver', this.$data.form_data).then(function (response) {
+                        _this.$router.go();
+                    }).catch(function (res) {
+                        _this.errors = res.response.data.errors;
+                    });
+                } else {
+                    this.errors = 'Nem rendes IPcím:PORT-ot adtál meg';
+                };
+            };
         }
     }
 });
@@ -67283,12 +67316,97 @@ var render = function() {
           )
         }),
         _vm._v(" "),
-        _vm._m(1)
+        _vm.errors
+          ? [
+              _c(
+                "div",
+                {
+                  staticClass: "block bg-grey-lightest shadow rounded-lg",
+                  attrs: { id: "server" }
+                },
+                [
+                  _c(
+                    "div",
+                    {
+                      staticClass:
+                        "bg-red-lightest border border-red-light text-red-dark px-4 py-3 rounded relative",
+                      attrs: { role: "alert" }
+                    },
+                    [
+                      _c("span", { staticClass: "block sm:inline" }, [
+                        _vm._v(_vm._s(_vm.errors))
+                      ])
+                    ]
+                  )
+                ]
+              )
+            ]
+          : _vm._e(),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            staticClass: "block bg-grey-lightest shadow rounded-lg",
+            attrs: { id: "server" }
+          },
+          [
+            _c(
+              "form",
+              {
+                staticClass: "w-full flex",
+                on: {
+                  submit: function($event) {
+                    $event.preventDefault()
+                    return _vm.addNewServer($event)
+                  }
+                }
+              },
+              [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.form_data.new_server_ip,
+                      expression: "form_data.new_server_ip"
+                    }
+                  ],
+                  staticClass:
+                    "shadow rounded-l w-5/6 text-grey-darker bg-grey-lighter focus:outline-none p-3",
+                  attrs: { type: "text", placeholder: "Szerverip" },
+                  domProps: { value: _vm.form_data.new_server_ip },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(
+                        _vm.form_data,
+                        "new_server_ip",
+                        $event.target.value
+                      )
+                    }
+                  }
+                }),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass:
+                      "w-1/6 font-sans shadow text-grey rounded-r font-bold bg-grey-lighter text-lg",
+                    attrs: { type: "submit" }
+                  },
+                  [_vm._v(">")]
+                )
+              ]
+            )
+          ]
+        )
       ],
       2
     ),
     _vm._v(" "),
-    _vm._m(2)
+    _vm._m(1)
   ])
 }
 var staticRenderFns = [
@@ -67312,37 +67430,6 @@ var staticRenderFns = [
           },
           [_vm._v("MTASERVERS.EU")]
         )
-      ]
-    )
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "div",
-      {
-        staticClass: "block bg-grey-lightest shadow rounded-lg",
-        attrs: { id: "server" }
-      },
-      [
-        _c("form", { staticClass: "w-full flex" }, [
-          _c("input", {
-            staticClass:
-              "shadow rounded-l w-5/6 text-grey-darker bg-grey-lighter focus:outline-none p-3",
-            attrs: { type: "text", placeholder: "Szerverip" }
-          }),
-          _vm._v(" "),
-          _c(
-            "button",
-            {
-              staticClass:
-                "w-1/6 font-sans shadow text-grey rounded-r font-bold bg-grey-lighter text-lg",
-              attrs: { type: "submit" }
-            },
-            [_vm._v(">")]
-          )
-        ])
       ]
     )
   },

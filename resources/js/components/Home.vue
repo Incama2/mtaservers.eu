@@ -12,9 +12,17 @@
                 <line-chart :data='server.players' :colors="['#3cbbbb']" :curve="true" :legend="false" height="400px"></line-chart>
             </div>
 
+            <template v-if="errors">
+                <div id="server" class="block bg-grey-lightest shadow rounded-lg">
+                    <div class="bg-red-lightest border border-red-light text-red-dark px-4 py-3 rounded relative" role="alert">
+                        <span class="block sm:inline">{{ errors }}</span>
+                    </div>
+                </div>
+            </template>
+
             <div id="server" class="block bg-grey-lightest shadow rounded-lg">
-                <form class="w-full flex">
-                    <input class="shadow rounded-l w-5/6 text-grey-darker bg-grey-lighter focus:outline-none p-3" type="text" placeholder="Szerverip">
+                <form class="w-full flex" @submit.prevent="addNewServer">
+                    <input v-model="form_data.new_server_ip" class="shadow rounded-l w-5/6 text-grey-darker bg-grey-lighter focus:outline-none p-3" type="text" placeholder="Szerverip">
                     <button type="submit" class="w-1/6 font-sans shadow text-grey rounded-r font-bold bg-grey-lighter text-lg">></button>
                 </form>
             </div>
@@ -29,6 +37,14 @@
 <script>
     export default {
         name: 'home',
+        data() {
+            return {
+                form_data: {
+                    new_server_ip: '',
+                },
+                errors: null,
+            }
+        },
         mounted() {
             if (this.servers.length) {
                 return;
@@ -39,6 +55,23 @@
         computed: {
             servers() {
                 return this.$store.getters.servers;
+            }
+        },
+        methods: {
+            addNewServer() {
+                if (this.$data.form_data.new_server_ip.length > 9) {
+                    if (this.$data.form_data.new_server_ip.match(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]):[0-9]+$/g)) {
+                        axios.post('api/addserver', this.$data.form_data)
+                        .then((response) => {
+                            this.$router.go();
+                        })
+                        .catch((res) => {
+                            this.errors = res.response.data.errors
+                        });
+                    } else {
+                        this.errors = 'Nem rendes IPcím:PORT-ot adtál meg'
+                    };
+                };
             }
         }
     }
